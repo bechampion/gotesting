@@ -6,6 +6,9 @@ import (
     "github.com/gorilla/mux"
     "fmt"
     "encoding/json"
+    "time"
+    "os/exec"
+    //"reflect"
 )
 
 type People struct {
@@ -13,12 +16,22 @@ type People struct {
     Name    string      `json:"name"`
 }
 
+var Messages = make(chan string)
+
+
 /// demo people handler
-func PeopleHandler( w  http.ResponseWriter , r *http.Request) { 
+func PeopleHandler( w  http.ResponseWriter , r *http.Request  ) { 
     params := mux.Vars(r)
     id := params["id"]
-    var pp = &People {id, "tusia"}
+    pp := &People {id, "tusia"}
     b, _ := json.Marshal(pp)
+    go func(){ 
+        time.Sleep(2000 * time.Millisecond)
+        cmd , _ := exec.Command("date","+%s").Output()
+        Messages <- string(cmd)
+
+
+    }()
     fmt.Fprintf(w,"%s" , b)
     b = nil
 }
@@ -33,7 +46,10 @@ func main() {
         w.WriteHeader(http.StatusNotImplemented)
         fmt.Fprintf(w , "NO")
     } )
-
-
+    fmt.Println(Messages)
+    go func() { for elem := range Messages{
+        fmt.Println(elem)
+    }}()
     log.Fatal(http.ListenAndServe(":8000", r))
+
 }
