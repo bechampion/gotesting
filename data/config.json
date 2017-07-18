@@ -1,0 +1,8 @@
+{ 
+  "Name" : "Jeronimo",
+  "Age" : 13 ,
+  "LastName" : "Garcia",
+  "Foods" : ["curry", "chicken" ] ,
+  "Pet" : "Dog"
+}
+
